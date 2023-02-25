@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
   View,
   Text,
@@ -12,9 +12,10 @@ import { Colors } from 'react-native/Libraries/NewAppScreen'
 import { useNavigation } from '@react-navigation/native'
 
 export default function SignIn() {
-  const navigation = useNavigation(
+  const [userName, setUserName] = useState('')
+  const [password, setPassword] = useState('')
 
-    );
+  const navigation = useNavigation()
 
   return (
     <View style={styles.container}>
@@ -24,7 +25,9 @@ export default function SignIn() {
         style={styles.containerHeader}
       >
         <Text style={styles.message}>Bem-vindo(a) 😎</Text>
-        <Text style={styles.second}>Para continuarmos digite a sua conta do GitHub e a senha:</Text>
+        <Text style={styles.second}>
+          Para continuarmos digite a sua conta do GitHub e a senha:
+        </Text>
       </Animatable.View>
 
       <Animatable.View
@@ -33,11 +36,32 @@ export default function SignIn() {
         style={styles.containerForm}
       >
         <Text style={styles.title}>Conta</Text>
-        <TextInput placeholder="Digite a sua conta do GitHub aqui" style={styles.input} />
+        <TextInput
+          placeholder="Digite a sua conta do GitHub aqui"
+          style={styles.input}
+          onChangeText={input => {
+            setUserName(input)
+          }}
+        />
         <Text style={styles.title}>Senha</Text>
-        <TextInput placeholder="A senha será 'desafio2023'" style={styles.input} />
+        <TextInput
+          placeholder="A senha será 'desafio2023'"
+          style={styles.input}
+          onChangeText={input => {
+            setPassword(input)
+          }}
+        />
 
-        <TouchableOpacity style={styles.button} onPress={ () => navigation.navigate('UserList')}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => {
+            if (password !== 'desafio123') {
+              console.log('Senha Incorreta')
+              return
+            }
+            navigation.navigate('UserList', { userName: userName })
+          }}
+        >
           <Text style={styles.buttonText}>Acessar</Text>
         </TouchableOpacity>
       </Animatable.View>

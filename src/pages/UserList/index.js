@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   View,
   Text,
@@ -7,9 +7,36 @@ import {
   TouchableOpacity
 } from 'react-native'
 
+import { api } from '../../api'
+
 import * as Animatable from 'react-native-animatable'
 
-export default function UserList() {
+export default function UserList({route}) {
+  const [repositories, setRepositories] = useState([])
+  
+  const {userName} = route.params
+
+  const fetchRepositories = async () => {
+    try {
+      const { data } = await api.get(`users/${userName}/repos`)
+      setRepositories(data)
+    } catch (error) {
+      setRepositories ([])
+    }
+  }
+  const mountItem = () => {
+    if (repositories.length === 0) {
+      return <Text>Sem Repositorios</Text>
+    }
+    const itens = repositories.map(repository => {
+      return <Text key={repository.name}> {repository.name} </Text>
+    })
+    return itens
+  }
+
+  useEffect(() => {
+    fetchRepositories()
+  }, [])
 
   return (
     <View style={styles.container}>
@@ -18,7 +45,7 @@ export default function UserList() {
         animation="fadeInLeft"
         style={styles.containerHeader}
       >
-        <Text style={styles.message}>User Screen</Text>
+        <Text style={styles.message}>{userName}</Text>
       </Animatable.View>
 
       <Animatable.View
@@ -26,6 +53,7 @@ export default function UserList() {
         animation="fadeInUp"
         style={styles.containerForm}
       >
+        {mountItem()}
       </Animatable.View>
     </View>
   )
@@ -46,7 +74,7 @@ const styles = StyleSheet.create({
   message: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#fff',
+    color: '#fff'
   },
 
   containerForm: {
@@ -56,6 +84,5 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 25,
     paddingStart: '5%',
     paddingEnd: '5%'
-  },
-
+  }
 })
